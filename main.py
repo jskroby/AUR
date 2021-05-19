@@ -2,8 +2,10 @@ from flask import Flask
 from flask import request
 import json
 from binance.client import Client
-import secrets
-client = Client(secrets.api_key, secrets.api_secret)
+
+import settings
+client = Client(settings.api_key,
+                settings.api_secret)
 app = Flask(__name__)
 
 
@@ -14,10 +16,13 @@ def hello_world():
 
 @app.route("/aurox", methods=['POST'])
 def aurox_webhook():
-    response = request.get_json()
-    if response['exchange'] == 'binance':
+    aurox_indicator = request.get_json()
+    if aurox_indicator['exchange'] == 'binance':
+        binance_ticker = client.get_ticker(symbol=aurox_indicator['pair'])
+
         with open('data.json', 'a') as outfile:
-            json.dump(response, outfile)
+            merged = {**aurox_indicator, **binance_ticker}
+            json.dump(merged, outfile)
             outfile.write('\n')
 
     return "success"
