@@ -6,9 +6,13 @@ import pymongo
 
 import settings
 
+# binance client
 client = Client(settings.api_key,
                 settings.api_secret)
+
 app = Flask(__name__)
+
+# establish database connection
 mongo = pymongo.MongoClient(settings.db_host, username=settings.db_user, password=settings.db_pass,
                             port=settings.db_port)
 
@@ -35,6 +39,7 @@ def index():
         first = False
 
     return table_start + ''.join(table_data) + table_end + button
+
 
 @app.route("/aurox", methods=['POST', 'GET'])
 def aurox_webhook():
@@ -66,4 +71,3 @@ def aurox_webhook():
         output.headers["Content-Disposition"] = "attachment; filename=aurox.csv"
         output.headers["Content-type"] = "text/csv"
         return output
-
