@@ -18,7 +18,7 @@ services:
       - mongo-data:/data/db
       - mongo-configdb:/data/configdb
     ports:
-      - "127.0.0.1:27777:27017"
+      - "127.0.0.1:27017:27017"
 
   mongo-express:
     image: mongo-express
