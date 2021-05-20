@@ -1,10 +1,11 @@
 # aurox signals
 
-Collects the signals from aurox and stores them in a database
+Collects the signals from aurox and stores them in a database. Currently supports Price ticker from Binance only. The Webhook url is http://localhost:5001/aurox (adjust port number)
 ## env files
 copy _.env.sample_ to _.env_ and _settings.sample.py_ to _settings.py_ and adjust the settings.
 
 ## run with docker and docker-compose
+(easy way)
 
 ```bash
 docker-compose up -d
@@ -18,6 +19,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+start a MongoDB server and adjust the _db_host_ parameter in _settings.py_.
+
 run flask app with
 ```bash
 FLASK_APP=main venv/bin/flask run
