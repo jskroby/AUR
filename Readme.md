@@ -1,6 +1,8 @@
 # aurox signals
 
 Collects the signals from aurox and stores them in a database
+## env files
+copy _.env.sample_ to _.env_ and _settings.sample.py_ to _settings.py_ and adjust the settings.
 
 ## run with docker and docker-compose
 
