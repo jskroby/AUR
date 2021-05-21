@@ -1,25 +1,20 @@
 from flask import Flask
 from flask import request
 from flask import make_response
-from binance.client import Client
 import pymongo
 
 import settings
 
-# binance client
-client = Client(settings.api_key,
-                settings.api_secret)
-
 app = Flask(__name__)
 
 # establish database connection
-mongo = pymongo.MongoClient(settings.db_host, username=settings.db_user, password=settings.db_pass,
+database = pymongo.MongoClient(settings.db_host, username=settings.db_user, password=settings.db_pass,
                             port=settings.db_port)
 
 
 @app.route("/")
 def index():
-    mydb = mongo["indicators"]
+    mydb = database["indicators"]
     mycol = mydb["aurox"]
 
     table_start = "<table border=1><thead>"
@@ -44,19 +39,29 @@ def index():
 @app.route("/aurox", methods=['POST', 'GET'])
 def aurox_webhook():
     if request.method == 'POST':
+        def insert_indicator(indicator):
+            if indicator['exchange'] == 'binance':
+                from binance.client import Client
+                binance_client = Client(settings.api_key, settings.api_secret)
+                binance_ticker = binance_client.get_ticker(symbol=indicator['pair'])
+                indicator = {**indicator, **binance_ticker}
+
+            mydb = database["indicators"]
+            mycol = mydb["aurox"]
+            indicator['remote_addr'] = request.remote_addr
+            _id = mycol.insert_one(indicator)
 
         aurox_indicator = request.get_json()
-        if aurox_indicator['exchange'] == 'binance':
-            binance_ticker = client.get_ticker(symbol=aurox_indicator['pair'])
-            merged = {**aurox_indicator, **binance_ticker}
+        if isinstance(aurox_indicator, dict):
+            insert_indicator(aurox_indicator)
+        elif isinstance(aurox_indicator, list):
+            for i in aurox_indicator:
+                insert_indicator(i)
 
-            mydb = mongo["indicators"]
-            mycol = mydb["aurox"]
-            x = mycol.insert_one(merged)
         return "success"
 
     else:
-        mydb = mongo["indicators"]
+        mydb = database["indicators"]
         mycol = mydb["aurox"]
         first = True
         csv_data = []
