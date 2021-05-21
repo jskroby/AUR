@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Aurox Signals{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                {% for header in th %}
+                    <th scope="col">{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+                {% for row in td %}
+                    {% if 'short' in row[2] %}
+                        <tr class="text-success">
+                    {% else %}
+                        <tr class="text-danger">
+                    {% endif %}
+                        {% for cell in row %}
+                            <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+        </tbody>
+    </table></div>
+<div class="row">
+    <form action='aurox'><input type='submit' value='Download' /></form>
+</div>
+{% endblock %}

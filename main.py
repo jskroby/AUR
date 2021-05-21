@@ -1,6 +1,4 @@
-from flask import Flask
-from flask import request
-from flask import make_response
+from flask import Flask, request, make_response, render_template
 import pymongo
 
 import settings
@@ -9,7 +7,7 @@ app = Flask(__name__)
 
 # establish database connection
 database = pymongo.MongoClient(settings.db_host, username=settings.db_user, password=settings.db_pass,
-                            port=settings.db_port)
+                               port=settings.db_port)
 
 
 @app.route("/")
@@ -17,9 +15,7 @@ def index():
     mydb = database["indicators"]
     mycol = mydb["aurox"]
 
-    table_start = "<table border=1><thead>"
-    table_end = "</tbody></table>"
-    button = "<p><form action='aurox'><input type='submit' value='Download' /></form></p>"
+    table_head = []
     table_data = []
     first = True
 
@@ -29,11 +25,10 @@ def index():
         keys, values = zip(*filtered.items())
 
         if first:
-            table_data.append('<tr><th>' + '</th><th>'.join(keys) + '</th></tr></thead><tbody>')
-        table_data.append('<tr><td>' + '</td><td>'.join(values) + '</td></tr>')
+            table_head = keys
+        table_data.append(values)
         first = False
-
-    return table_start + ''.join(table_data) + table_end + button
+    return render_template('index.html', th=table_head, td=table_data)
 
 
 @app.route("/aurox", methods=['POST', 'GET'])
