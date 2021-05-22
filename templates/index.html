@@ -30,10 +30,10 @@
                 <td>{{ row.pair }}</td>
                 <td>{{ row.timestampIso }}</td>
                 <td>
-                    {% if row["signal"] == "long" %}
-                        {{ row.askPrice }}
+                    {% if row.signal == "long" %}
+                        {{ row.askPrice | float }}
                     {% else %}
-                        {{ row.bidPrice }}
+                        {{ row.bidPrice | float }}
                     {% endif %}
                 </td>
             </tr>

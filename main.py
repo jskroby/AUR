@@ -10,6 +10,13 @@ database = pymongo.MongoClient(settings.db_host, username=settings.db_user, pass
                                port=settings.db_port)
 
 
+def float_filter(integer):
+    return float(integer)
+
+
+app.jinja_env.filters['float'] = float_filter
+
+
 @app.route("/")
 def index():
     mydb = database["indicators"]
