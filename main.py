@@ -77,4 +77,5 @@ def view_pair(name):
         query_params['timeUnit'] = time_unit
 
     data = list(mycol.find(query_params, {'_id': False}))
-    return render_template('pair.html', data=data, pair=name, time_unit=time_unit)
+    all_pairs = list(mycol.find().distinct('pair'))
+    return render_template('pair.html', data=data, pair=name, time_unit=time_unit, all_pairs=all_pairs)

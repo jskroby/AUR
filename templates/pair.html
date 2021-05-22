@@ -1,69 +1,91 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h3 class="py-3 text-center">{% block title %}{{pair}}{% endblock %}</h3>
+<h3 class="py-3 text-center">{% block title %}{{pair}}{% endblock %}</h3>
 {% endblock %}
 
 {% block content %}
 
 {% macro button_color(value) -%}
-    {%- if time_unit == value -%}
-    btn-primary
-    {%- else -%}
-    btn-secondary
-    {%- endif -%}
+{%- if time_unit == value -%}
+btn-primary
+{%- else -%}
+btn-secondary
+{%- endif -%}
 {%- endmacro -%}
 
 <div class="row pb-3">
+
+
     <form action="{{ url_for('view_pair', name=pair) }}">
+        <div class="btn-group">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                {{ pair }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuPairs">
+                {% for p in all_pairs %}
+                    <li><a class="dropdown-item" href="{{ url_for('view_pair', name=p) }}">{{ p }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
         <div class="btn-group btn-group-sm" role="group" aria-label="Intervals">
-            <a href="{{ url_for('view_pair', name=pair) }}"  class="btn {{ button_color('') }}">All</a>
-            <button type="submit" class="btn {{ button_color('30_minute') }}" name="time_unit" value="30_minute">30 min</button>
-            <button type="submit" class="btn {{ button_color('1_hour') }}" name="time_unit" value="1_hour">1 hour</button>
-            <button type="submit" class="btn {{ button_color('4_hour') }}" name="time_unit" value="4_hour">4 hour</button>
-            <button type="submit" class="btn {{ button_color('12_hour') }}" name="time_unit" value="12_hour">12 hour</button>
+            <a href="{{ url_for('view_pair', name=pair) }}" class="btn {{ button_color('') }}">All</a>
+            <button type="submit" class="btn {{ button_color('30_minute') }}" name="time_unit" value="30_minute">30 min
+            </button>
+            <button type="submit" class="btn {{ button_color('1_hour') }}" name="time_unit" value="1_hour">1 hour
+            </button>
+            <button type="submit" class="btn {{ button_color('4_hour') }}" name="time_unit" value="4_hour">4 hour
+            </button>
+            <button type="submit" class="btn {{ button_color('12_hour') }}" name="time_unit" value="12_hour">12 hour
+            </button>
             <button type="submit" class="btn {{ button_color('1_day') }}" name="time_unit" value="1_day">1 day</button>
-            <button type="submit" class="btn {{ button_color('1_week') }}" name="time_unit" value="1_week">1 week</button>
-            <button type="submit" class="btn {{ button_color('1_month') }}" name="time_unit" value="1_month">1 month</button>
+            <button type="submit" class="btn {{ button_color('1_week') }}" name="time_unit" value="1_week">1 week
+            </button>
+            <button type="submit" class="btn {{ button_color('1_month') }}" name="time_unit" value="1_month">1 month
+            </button>
         </div>
     </form>
 </div>
 <div class="row">
     <table class="table">
         <thead>
-            <tr>
-                <th scope="col">Signal</th>
-                {% if not time_unit %}
-                <th scope="col">TimeUnit</th>
-                {% endif %}
-                <th scope="col">Time</th>
-                <th scope="col">Price</th>
-            </tr>
+        <tr>
+            <th scope="col">Signal</th>
+            {% if not time_unit %}
+            <th scope="col">TimeUnit</th>
+            {% endif %}
+            <th scope="col">Time</th>
+            <th scope="col">Price</th>
+        </tr>
         </thead>
         <tbody>
-            {% for row in data %}
-            <tr>
-                <td>
-                    {% if row.signal == "long" %}
-                    <div class="dot bg-success" title="long"></div> <span class="text-success">long</span>
-                    {% else %}
-                    <div class="dot bg-danger" title="short"></div> <span class="text-danger">short</span>
-                    {% endif %}
-                </td>
-                {% if not time_unit %}
-                <td>{{ row.timeUnit }}</td>
+        {% for row in data %}
+        <tr>
+            <td>
+                {% if row.signal == "long" %}
+                <div class="dot bg-success" title="long"></div>
+                <span class="text-success">long</span>
+                {% else %}
+                <div class="dot bg-danger" title="short"></div>
+                <span class="text-danger">short</span>
                 {% endif %}
-                <td>{{ row.timestamp | timestamp }}</td>
-                <td>
-                    {% if row.signal == "long" %}
-                        {{ row.askPrice | float }}
-                    {% else %}
-                        {{ row.bidPrice | float }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+            </td>
+            {% if not time_unit %}
+            <td>{{ row.timeUnit }}</td>
+            {% endif %}
+            <td>{{ row.timestamp | timestamp }}</td>
+            <td>
+                {% if row.signal == "long" %}
+                {{ row.askPrice | float }}
+                {% else %}
+                {{ row.bidPrice | float }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
         </tbody>
-    </table></div>
+    </table>
+</div>
 
 {% endblock %}
