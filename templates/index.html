@@ -20,15 +20,15 @@
             {% for row in data %}
             <tr>
                 <td>
-                    {% if row.signal == "long" %}
-                    <div class="dot bg-success" title="long"></div>
+                      {% if row.signal == "long" %}
+                    <div class="dot bg-success" title="long"></div> <span class="text-success">long</span>
                     {% else %}
-                    <div class="dot bg-danger" title="short"></div>
+                    <div class="dot bg-danger" title="short"></div> <span class="text-danger">short</span>
                     {% endif %}
                 </td>
                 <td>{{ row.timeUnit }}</td>
-                <td>{{ row.pair }}</td>
-                <td>{{ row.timestampIso }}</td>
+                <td><a href="{{ url_for('view_pair', name=row.pair) }}">{{ row.pair }}</a></td>
+                <td>{{ row.timestamp | timestamp }}</td>
                 <td>
                     {% if row.signal == "long" %}
                         {{ row.askPrice | float }}

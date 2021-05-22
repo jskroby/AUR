@@ -2,6 +2,7 @@ from flask import Flask, request, make_response, render_template
 import pymongo
 
 import settings
+import filters
 
 app = Flask(__name__)
 
@@ -9,12 +10,8 @@ app = Flask(__name__)
 database = pymongo.MongoClient(settings.db_host, username=settings.db_user, password=settings.db_pass,
                                port=settings.db_port)
 
-
-def float_filter(integer):
-    return float(integer)
-
-
-app.jinja_env.filters['float'] = float_filter
+app.jinja_env.filters['float'] = filters.float_filter
+app.jinja_env.filters['timestamp'] = filters.timestamp_filter
 
 
 @app.route("/")
@@ -65,3 +62,19 @@ def aurox_webhook():
         output.headers["Content-Disposition"] = "attachment; filename=aurox.csv"
         output.headers["Content-type"] = "text/csv"
         return output
+
+
+@app.route("/pair/<name>", methods=['GET'])
+def view_pair(name):
+    time_unit = request.args.get('time_unit', '')
+    mydb = database["indicators"]
+    mycol = mydb["aurox"]
+
+    query_params = {
+        'pair': name
+    }
+    if time_unit:
+        query_params['timeUnit'] = time_unit
+
+    data = list(mycol.find(query_params, {'_id': False}))
+    return render_template('pair.html', data=data, pair=name, time_unit=time_unit)
