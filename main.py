@@ -14,21 +14,8 @@ database = pymongo.MongoClient(settings.db_host, username=settings.db_user, pass
 def index():
     mydb = database["indicators"]
     mycol = mydb["aurox"]
-
-    table_head = []
-    table_data = []
-    first = True
-
-    for x in mycol.find({}, {'_id': False}):
-        keys = ['timestampIso', 'pair', 'signal', 'timeUnit', 'confirmed', 'bidPrice', 'askPrice']
-        filtered = {key: x[key] for key in keys}
-        keys, values = zip(*filtered.items())
-
-        if first:
-            table_head = keys
-        table_data.append(values)
-        first = False
-    return render_template('index.html', th=table_head, td=table_data)
+    data = list(mycol.find({}, {'_id': False}))
+    return render_template('index.html', data=data)
 
 
 @app.route("/aurox", methods=['POST', 'GET'])

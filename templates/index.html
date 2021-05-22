@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}Aurox Signals{% endblock %}</h1>
+    <h3 class="py-3 text-center">{% block title %}Aurox Signals{% endblock %}</h3>
 {% endblock %}
 
 {% block content %}
@@ -9,26 +9,38 @@
     <table class="table">
         <thead>
             <tr>
-                {% for header in th %}
-                    <th scope="col">{{ header }}</th>
-                {% endfor %}
+                <th scope="col">Signal</th>
+                <th scope="col">TimeUnit</th>
+                <th scope="col">Pair</th>
+                <th scope="col">Time</th>
+                <th scope="col">Price</th>
             </tr>
         </thead>
         <tbody>
-                {% for row in td %}
-                    {% if 'short' in row[2] %}
-                        <tr class="text-success">
+            {% for row in data %}
+            <tr>
+                <td>
+                    {% if row.signal == "long" %}
+                    <div class="dot bg-success" title="long"></div>
                     {% else %}
-                        <tr class="text-danger">
+                    <div class="dot bg-danger" title="short"></div>
                     {% endif %}
-                        {% for cell in row %}
-                            <td>{{ cell }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
+                </td>
+                <td>{{ row.timeUnit }}</td>
+                <td>{{ row.pair }}</td>
+                <td>{{ row.timestampIso }}</td>
+                <td>
+                    {% if row["signal"] == "long" %}
+                        {{ row.askPrice }}
+                    {% else %}
+                        {{ row.bidPrice }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table></div>
 <div class="row">
-    <form action='aurox'><input type='submit' value='Download' /></form>
+    <form action='aurox'><input type='submit' value='Download all' /></form>
 </div>
 {% endblock %}
