@@ -24,7 +24,7 @@ def index():
 
 @app.route("/aurox", methods=['POST', 'GET'])
 def aurox_webhook():
-    if request.method == 'POST':
+    if request.method == 'POST' and request.remote_addr in settings.whitelist:
         def insert_indicator(indicator):
             if indicator['exchange'] == 'binance':
                 from binance.client import Client
