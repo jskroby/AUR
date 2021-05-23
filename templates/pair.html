@@ -2,6 +2,7 @@
 
 {% block header %}
 <h3 class="py-3 text-center">{% block title %}{{pair}}{% endblock %}</h3>
+<a href="{{ url_for('index') }}" class="" role="button">Back to index</a>
 {% endblock %}
 
 {% block content %}
@@ -14,9 +15,10 @@ btn-secondary
 {%- endif -%}
 {%- endmacro -%}
 
-<div class="row pb-3">
+<div class="row py-3">
     <form action="{{ url_for('view_pair', name=pair) }}">
         <div class="btn-group">
+
             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
                 {{ pair }}
@@ -88,7 +90,7 @@ btn-secondary
         </table>
     </div>
 </div>
-<div class="row py-3">
+<div class="row pb-3">
     <form action="{{ url_for('download', name=pair) }}">
         {% if time_unit %}
         <button type='submit' class="btn btn-primary" name="time_unit" value="{{ time_unit }}">Download {{ pair }}/{{ time_unit }}</button>
