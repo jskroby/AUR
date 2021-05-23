@@ -15,8 +15,6 @@ btn-secondary
 {%- endmacro -%}
 
 <div class="row pb-3">
-
-
     <form action="{{ url_for('view_pair', name=pair) }}">
         <div class="btn-group">
             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -47,53 +45,59 @@ btn-secondary
         </div>
     </form>
 </div>
+{% if data|length > 1 %}
 <div class="row">
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Signal</th>
-            {% if not time_unit %}
-            <th scope="col">TimeUnit</th>
-            {% endif %}
-            <th scope="col">Time</th>
-            <th scope="col">Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for row in data %}
-        <tr>
-            <td>
-                {% if row.signal == "long" %}
-                <div class="dot bg-success" title="long"></div>
-                <span class="text-success">long</span>
-                {% else %}
-                <div class="dot bg-danger" title="short"></div>
-                <span class="text-danger">short</span>
+    <div class="col">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Signal</th>
+                {% if not time_unit %}
+                <th scope="col">TimeUnit</th>
                 {% endif %}
-            </td>
-            {% if not time_unit %}
-            <td>{{ row.timeUnit }}</td>
-            {% endif %}
-            <td>{{ row.timestamp | timestamp }}</td>
-            <td>
-                {% if row.signal == "long" %}
-                {{ row.askPrice | float }}
-                {% else %}
-                {{ row.bidPrice | float }}
+                <th scope="col">Time</th>
+                <th scope="col">Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in data %}
+            <tr>
+                <td>
+                    {% if row.signal == "long" %}
+                    <div class="dot bg-success" title="long"></div>
+                    <span class="text-success">long</span>
+                    {% else %}
+                    <div class="dot bg-danger" title="short"></div>
+                    <span class="text-danger">short</span>
+                    {% endif %}
+                </td>
+                {% if not time_unit %}
+                <td>{{ row.timeUnit }}</td>
                 {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                <td>{{ row.timestamp | timestamp }}</td>
+                <td>
+                    {% if row.signal == "long" %}
+                    {{ row.askPrice | float }}
+                    {% else %}
+                    {{ row.bidPrice | float }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-<div class="row p-3">
+<div class="row py-3">
     <form action="{{ url_for('download', name=pair) }}">
         {% if time_unit %}
-        <button type='submit' name="time_unit" value="{{ time_unit }}">Download {{ pair }}/{{ time_unit }}</button>
+        <button type='submit' class="btn btn-primary" name="time_unit" value="{{ time_unit }}">Download {{ pair }}/{{ time_unit }}</button>
         {% else %}
-        <button type='submit'>Download {{ pair }}</button>
+        <button type='submit' class="btn btn-primary">Download {{ pair }}</button>
         {% endif %}
     </form>
 </div>
+{% else %}
+No data
+{% endif %}
 {% endblock %}
