@@ -87,5 +87,13 @@ btn-secondary
         </tbody>
     </table>
 </div>
-
+<div class="row p-3">
+    <form action="{{ url_for('download', name=pair) }}">
+        {% if time_unit %}
+        <button type='submit' name="time_unit" value="{{ time_unit }}">Download {{ pair }}/{{ time_unit }}</button>
+        {% else %}
+        <button type='submit'>Download {{ pair }}</button>
+        {% endif %}
+    </form>
+</div>
 {% endblock %}

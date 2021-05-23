@@ -18,13 +18,13 @@ app.jinja_env.filters['timestamp'] = filters.timestamp_filter
 def index():
     mydb = database["indicators"]
     mycol = mydb["aurox"]
-    data = list(mycol.find({}, {'_id': False}))
-    return render_template('index.html', data=data)
+    pairs = list(mycol.distinct('pair'))
+    return render_template('index.html', pairs=pairs)
 
 
-@app.route("/aurox", methods=['POST', 'GET'])
+@app.route("/aurox", methods=['POST'])
 def aurox_webhook():
-    if request.method == 'POST' and request.remote_addr in settings.whitelist:
+    if request.remote_addr in settings.whitelist:
         def insert_indicator(indicator):
             if indicator['exchange'] == 'binance':
                 from binance.client import Client
@@ -46,23 +46,6 @@ def aurox_webhook():
 
         return "success"
 
-    else:
-        mydb = database["indicators"]
-        mycol = mydb["aurox"]
-        first = True
-        csv_data = []
-        for x in mycol.find({}, {'_id': False}):
-            keys, values = zip(*x.items())
-            if first:
-                csv_data.append(';'.join(keys))
-
-            csv_data.append(';'.join(str(v) for v in values))
-            first = False
-        output = make_response("\n".join(csv_data))
-        output.headers["Content-Disposition"] = "attachment; filename=aurox.csv"
-        output.headers["Content-type"] = "text/csv"
-        return output
-
 
 @app.route("/pair/<name>", methods=['GET'])
 def view_pair(name):
@@ -71,7 +54,7 @@ def view_pair(name):
     mycol = mydb["aurox"]
 
     query_params = {
-        'pair': name
+        'pair': name.upper(),
     }
     if time_unit:
         query_params['timeUnit'] = time_unit
@@ -79,3 +62,31 @@ def view_pair(name):
     data = list(mycol.find(query_params, {'_id': False}))
     all_pairs = list(mycol.find().distinct('pair'))
     return render_template('pair.html', data=data, pair=name, time_unit=time_unit, all_pairs=all_pairs)
+
+
+@app.route("/download/<name>", methods=['GET'])
+def download(name):
+    query_params = {}
+    if name.upper() != "ALL":
+        query_params['pair'] = name.upper()
+
+    time_unit = request.args.get('time_unit', '')
+    if time_unit:
+        query_params['timeUnit'] = time_unit
+
+    mydb = database["indicators"]
+    mycol = mydb["aurox"]
+
+    first = True
+    csv_data = []
+    for x in mycol.find(query_params, {'_id': False}):
+        keys, values = zip(*x.items())
+        if first:
+            csv_data.append(';'.join(keys))
+
+        csv_data.append(';'.join(str(v) for v in values))
+        first = False
+    output = make_response("\n".join(csv_data))
+    output.headers["Content-Disposition"] = "attachment; filename=aurox.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
