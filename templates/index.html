@@ -8,7 +8,7 @@
 <div class="row pb-2">
 
     <div class="col-md-4 offset-md-4">
-        <h5>Available Pairs</h5>
+        Select a pair
         <ul class="list-group">
             {% for pair in pairs %}
             <a href="{{ url_for('view_pair', name=pair) }}" class="list-group-item list-group-item-action">{{pair}}</a>
@@ -17,9 +17,15 @@
     </div>
 </div>
 
-<div class="row py-2">
+<div class="row pb-2">
     <div class="offset-md-4">
         <a href="{{ url_for('download', name='ALL') }}" class="btn btn-primary" role="button">Download all data</a>
+    </div>
+</div>
+<div class="row pb-2">
+    <div class="">
+        Source:
+        <a href="https://gitlab.com/5queezer/aurox">gitlab.com/5queezer/aurox</a>
     </div>
 </div>
 {% endblock %}
