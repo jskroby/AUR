@@ -46,6 +46,8 @@ def aurox_webhook():
 
         return "success"
 
+    return "forbidden", 403
+
 
 @app.route("/pair/<name>", methods=['GET'])
 def view_pair(name):
