@@ -3,6 +3,9 @@ import pymongo
 
 import settings
 import filters
+import logging
+
+logging.basicConfig(level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 app = Flask(__name__)
 
@@ -24,7 +27,9 @@ def index():
 
 @app.route("/aurox", methods=['POST'])
 def aurox_webhook():
-    if request.remote_addr in settings.whitelist:
+    if not settings.whitelist or request.remote_addr in settings.whitelist:
+        app.logger.info("insert signal from %s" % request.remote_addr)
+
         def insert_indicator(indicator):
             if indicator['exchange'] == 'binance':
                 from binance.client import Client
