@@ -29,6 +29,7 @@ def index():
 def aurox_webhook():
     if not settings.whitelist or request.remote_addr in settings.whitelist:
         app.logger.info("insert signal from %s" % request.remote_addr)
+        app.logger.info("indicator data: %s" % request.get_data)
 
         def insert_indicator(indicator):
             if indicator['exchange'] == 'binance':
