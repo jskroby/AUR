@@ -28,8 +28,7 @@ def index():
 @app.route("/aurox", methods=['POST'])
 def aurox_webhook():
     if not settings.whitelist or request.remote_addr in settings.whitelist:
-        app.logger.info("insert signal from %s" % request.remote_addr)
-        app.logger.info("indicator data: %s" % request.get_data)
+        app.logger.info("insert signal from %s, data: %s" % (request.remote_addr, str(request.get_json())))
 
         def insert_indicator(indicator):
             if indicator['exchange'] == 'binance':
@@ -46,11 +45,14 @@ def aurox_webhook():
         aurox_indicator = request.get_json()
         if isinstance(aurox_indicator, dict):
             insert_indicator(aurox_indicator)
+            return "success single item", 200
+
         elif isinstance(aurox_indicator, list):
             for i in aurox_indicator:
                 insert_indicator(i)
+            return "success array", 200
 
-        return "success"
+        return "unrecognized format", 400
 
     return "forbidden", 403
 
