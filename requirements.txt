@@ -1,5 +1,4 @@
 flask
 python-binance
 pymongo
-dateutil
-logging
+gunicorn
